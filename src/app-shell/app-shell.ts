@@ -43,7 +43,7 @@ export class AppShell extends LitElement {
 								<!-- -->`}
 				</md-filled-button>
 			</div>
-			<div style="max-width:700px">
+			<div style="max-width:1200px">
 				<div class="flex flex-col mx-7 my-5">
 					<md-list-item inert>
 						<div slot="headline">Echo time</div>
@@ -56,9 +56,9 @@ export class AppShell extends LitElement {
 						labeled
 						value=${store.delayTime}
 						${bindInput(store, 'delayTime')}
-						min="0.5"
-						max="7"
-						step="0.5"
+						min="0.1"
+						max="20"
+						step="0.1"
 						class="flex-1"
 					></md-slider>
 				</div>
@@ -74,13 +74,68 @@ export class AppShell extends LitElement {
 						?disabled=${store.recording}
 						labeled
 						min="5"
-						max="30"
+						max="20"
 						step="1"
 						value=${store.echoLength}
 						${bindInput(store, 'echoLength')}
 						max="10"
 						class="flex-1"
 					></md-slider>
+				</div>
+
+				<div class="m-12">
+					<div class="mb-3">Presets</div>
+					<div class="flex gap-2">
+						<md-filled-button
+							?disabled=${store.recording}
+							@click=${() => {
+								store.delayTime = 0.1;
+								store.echoLength = 20;
+							}}
+						>
+							Karaoke
+						</md-filled-button>
+
+						<md-filled-button
+							?disabled=${store.recording}
+							@click=${() => {
+								store.delayTime = 0.5;
+								store.echoLength = 15;
+							}}
+						>
+							Void
+						</md-filled-button>
+
+						<md-filled-button
+							?disabled=${store.recording}
+							@click=${() => {
+								store.delayTime = 1;
+								store.echoLength = 9;
+							}}
+						>
+							Mountain
+						</md-filled-button>
+
+						<md-filled-button
+							?disabled=${store.recording}
+							@click=${() => {
+								store.delayTime = 4;
+								store.echoLength = 7;
+							}}
+						>
+							Reasoning
+						</md-filled-button>
+
+						<md-filled-button
+							?disabled=${store.recording}
+							@click=${() => {
+								store.delayTime = 15;
+								store.echoLength = 7;
+							}}
+						>
+							Reminder
+						</md-filled-button>
+					</div>
 				</div>
 			</div>
 			<!-- -->`;
