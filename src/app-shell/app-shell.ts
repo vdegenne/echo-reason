@@ -43,36 +43,45 @@ export class AppShell extends LitElement {
 								<!-- -->`}
 				</md-filled-button>
 			</div>
-			<div class="flex items-center mx-3 my-5">
-				<md-list-item inert>
-					<div slot="headline">Echo time</div>
-					<div slot="supporting-text">Time between repeats</div>
-				</md-list-item>
-				<md-slider
-					ticks
-					labeled
-					value=${store.delayTime}
-					${bindInput(store, 'delayTime')}
-					max="10"
-					class="flex-1"
-				></md-slider>
-			</div>
-			<div class="flex items-center mx-3 my-5">
-				<md-list-item inert>
-					<div slot="headline">Echo loss</div>
-					<div slot="supporting-text">Volume loss between repeats</div>
-				</md-list-item>
-				<md-slider
-					ticks
-					labeled
-					min="0"
-					max="2"
-					step="0.1"
-					value=${store.gain}
-					${bindInput(store, 'gain')}
-					max="10"
-					class="flex-1"
-				></md-slider>
+			<div style="max-width:700px">
+				<div class="flex flex-col mx-7 my-5">
+					<md-list-item inert>
+						<div slot="headline">Echo time</div>
+						<div slot="supporting-text">Time between repeats</div>
+						<div slot="end" secondary>${store.delayTime}s</div>
+					</md-list-item>
+					<md-slider
+						?disabled=${store.recording}
+						ticks
+						labeled
+						value=${store.delayTime}
+						${bindInput(store, 'delayTime')}
+						min="0.5"
+						max="7"
+						step="0.5"
+						class="flex-1"
+					></md-slider>
+				</div>
+				<div class="flex flex-col mx-7 my-5">
+					<md-list-item inert>
+						<div slot="headline">Number of repeats</div>
+						<div slot="supporting-text">
+							How many times would the echoing echo?
+						</div>
+						<div slot="end" secondary>${store.echoLength} times</div>
+					</md-list-item>
+					<md-slider
+						?disabled=${store.recording}
+						labeled
+						min="5"
+						max="30"
+						step="1"
+						value=${store.echoLength}
+						${bindInput(store, 'echoLength')}
+						max="10"
+						class="flex-1"
+					></md-slider>
+				</div>
 			</div>
 			<!-- -->`;
 	}

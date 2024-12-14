@@ -1,6 +1,7 @@
 import {ReactiveController, state} from '@snar/lit';
 import {type PropertyValues} from 'lit';
 import {saveToLocalStorage} from 'snar-save-to-local-storage';
+import {generateLogarithmicVolumeMap} from './utils.js';
 
 declare global {
 	interface Window {
@@ -11,8 +12,9 @@ declare global {
 @saveToLocalStorage('something')
 export class AppStore extends ReactiveController {
 	@state() recording = false;
-	@state() delayTime = 2;
-	@state() gain = 1;
+	@state() delayTime = 1;
+	@state() echoLength = 15;
+	@state() volume = 1;
 
 	// Audio-related properties
 	audioContext: AudioContext | null = null;
@@ -42,9 +44,9 @@ export class AppStore extends ReactiveController {
 				if (this.delayNode) {
 					this.delayNode.delayTime.value = this.delayTime;
 				}
-			} else if (changed.has('gain')) {
+			} else if (changed.has('volume')) {
 				if (this.gainNode) {
-					this.gainNode.gain.value = this.gain;
+					this.gainNode.gain.value = this.volume;
 				}
 			}
 		}
@@ -63,32 +65,48 @@ export class AppStore extends ReactiveController {
 			this.audioContext = new (window.AudioContext ||
 				window.webkitAudioContext)();
 
-			// Create microphone input from the stream
 			this.microphone = this.audioContext.createMediaStreamSource(stream);
 
-			this.gainNode = this.audioContext.createGain();
-			this.gainNode.gain.value = this.gain;
+			let delayLastnode: DelayNode;
+			// let gainValue = 1;
+			const volumeMap = generateLogarithmicVolumeMap(this.echoLength);
+			console.log(volumeMap);
+			let i: number;
+			for (i = 0; i < this.echoLength; i++) {
+				// for (let gainValue = 1; gainValue >= 0; gainValue = this.echoLoss) {
+				const delays = [];
+				let remainingTime = this.delayTime;
 
-			const delays = Array.from({length: this.delayTime}, () => {
-				const delay = this.audioContext.createDelay();
-				delay.delayTime.value = 1;
-				return delay;
-			});
-			const delayFirstNode = delays[0];
-			const delayLastnode = delays[delays.length - 1];
+				while (remainingTime > 0) {
+					const delay = this.audioContext.createDelay();
+					delay.delayTime.value = Math.min(remainingTime, 1); // Use up to 1s for each node
+					delays.push(delay);
+					remainingTime -= delay.delayTime.value;
+				}
+				const delayFirstNode = delays[0];
 
-			// microphone -> first delay
-			this.microphone.connect(delayFirstNode);
-			// first delay -> last delay
-			delays.reduce((prev, curr) => {
-				prev.connect(curr);
-				return curr;
-			});
-			// last delay -> gain
-			delayLastnode.connect(this.gainNode);
-			// gain -> output
-			this.gainNode.connect(this.audioContext.destination);
-
+				// microphone -> first delay
+				if (i === 0) {
+					this.microphone.connect(delayFirstNode);
+				}
+				// or last delayLastnode -> delayFirstNode
+				else {
+					delayLastnode.connect(delayFirstNode);
+				}
+				// first delay -> last delay
+				delayLastnode = delays[delays.length - 1];
+				const gainNode = this.audioContext.createGain();
+				gainNode.gain.value = volumeMap[i];
+				delays.reduce((prev, curr) => {
+					prev.connect(curr);
+					return curr;
+				});
+				// last delay -> gain
+				delayLastnode.connect(gainNode);
+				// gain -> output
+				gainNode.connect(this.audioContext.destination);
+			}
+			console.log(i);
 			this.recording = true;
 		} catch (err) {
 			console.log('Error accessing microphone: ', err);

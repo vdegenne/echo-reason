@@ -11,10 +11,12 @@
 	pointer-events: none;
 }
 
-.primary {
+[primary] {
 	color: var(--md-sys-color-primary);
 }
-
+[secondary] {
+	color: var(--md-sys-color-secondary);
+}
 [error] {
 	--md-sys-color-primary: var(--md-sys-color-error);
 	--md-sys-color-on-primary: var(--md-sys-color-on-error);

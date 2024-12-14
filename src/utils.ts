@@ -61,11 +61,26 @@ export function getElementsTree(node: Element): Promise<Element[]> {
 }
 export async function getElementInTree(
 	from: Element,
-	condition: (element: Element) => boolean
+	condition: (element: Element) => boolean,
 ): Promise<Element | undefined> {
 	for (const element of await getElementsTree(from)) {
 		if (condition(element)) {
 			return element;
 		}
 	}
+}
+
+export function generateLogarithmicVolumeMap(size: number): number[] {
+	if (size <= 0) return [];
+
+	const minVolume = 0.01; // Minimum volume at the last echo
+	const volumes: number[] = [];
+	const scale = Math.log10(1 / minVolume) / (size - 1); // Scaling factor for logarithmic range
+
+	for (let i = 0; i < size; i++) {
+		const volume = 1 / Math.pow(10, i * scale);
+		volumes.push(volume);
+	}
+
+	return volumes;
 }
