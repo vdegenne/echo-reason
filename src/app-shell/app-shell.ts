@@ -109,7 +109,7 @@ export class AppShell extends LitElement {
 						<md-filled-button
 							?disabled=${store.recording}
 							@click=${() => {
-								store.delayTime = 1;
+								store.delayTime = 1.5;
 								store.echoLength = 9;
 							}}
 						>
@@ -123,17 +123,27 @@ export class AppShell extends LitElement {
 								store.echoLength = 10;
 							}}
 						>
-							Meditation
+							Self-conviction
 						</md-filled-button>
 
 						<md-filled-button
 							?disabled=${store.recording}
 							@click=${() => {
 								store.delayTime = 4;
-								store.echoLength = 7;
+								store.echoLength = 10;
 							}}
 						>
 							Reasoning
+						</md-filled-button>
+
+						<md-filled-button
+							?disabled=${store.recording}
+							@click=${() => {
+								store.delayTime = 7;
+								store.echoLength = 10;
+							}}
+						>
+							Self-talk
 						</md-filled-button>
 
 						<md-filled-button
