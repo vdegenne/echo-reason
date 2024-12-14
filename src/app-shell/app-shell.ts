@@ -119,6 +119,16 @@ export class AppShell extends LitElement {
 						<md-filled-button
 							?disabled=${store.recording}
 							@click=${() => {
+								store.delayTime = 2;
+								store.echoLength = 10;
+							}}
+						>
+							Meditation
+						</md-filled-button>
+
+						<md-filled-button
+							?disabled=${store.recording}
+							@click=${() => {
 								store.delayTime = 4;
 								store.echoLength = 7;
 							}}
